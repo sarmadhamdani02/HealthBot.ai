@@ -9,5 +9,6 @@ export default function Home() {
     <Link href={'/profile'}>Profile </Link> 
     <Link href={'/login'}>Login </Link> 
     <Link href={'/signup'}>Signup </Link> 
+    <Link href={'/OTP'}>OTP Screen </Link> 
   </>;
 }

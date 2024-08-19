@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 import React from 'react';
 
 const HealthBotDashboard = () => {
@@ -21,7 +20,7 @@ const HealthBotDashboard = () => {
 
       {/* Doctor Cards */}
       <section className="flex flex-col items-center gap-4">
-        {Array(3).fill().map((_, i) => (
+        {Array(3).fill(null).map((_, i) => (
           <div key={i} className="w-full max-w-2xl flex items-center bg-[#00DB0F] text-white p-4 rounded-lg">
             <div className="w-20 h-20 rounded-full bg-white overflow-hidden">
               <img
@@ -49,4 +48,3 @@ const HealthBotDashboard = () => {
 };
 
 export default HealthBotDashboard;
->>>>>>> 9406b45c5323e9662cbfa93a441ffd00f3f7d129

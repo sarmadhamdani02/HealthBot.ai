@@ -1,23 +1,27 @@
 import React from 'react';
 import Link from 'next/link';
+import SideNavbar from '@/components/Drawer';
 
 
 const HealthBotDashboard = () => {
     return (
         <div className="min-h-screen bg-white p-4">
+            <SideNavbar/>
             <header className="flex justify-between items-center py-4">
+            
                 <button className="text-[#00DB0F] text-2xl">
                     <i className="fas fa-bars"></i>
                 </button>
+                
                 <h1 className="text-[#00DB0F]  absolute left-[40%] text-3xl font-bold">HealthBot</h1>
                 <span className="text-[#00DB0F] text-xl">UserName</span>
             </header>
-
+           
             <section className="flex flex-col items-center">
                 {/* Cards Section */}
                 <div className="flex flex-wrap justify-center gap-4 mb-8 mt-8">
                     {Array(3).fill(null).map((_, i) => (
-                        <div key={i} className="w-64 bg-[#00DB0F] text-white p-4 rounded-lg flex flex-col items-center">
+                        <div key={i} className="w-64 bg-[#00DB</section>0F] text-white p-4 rounded-lg flex flex-col items-center">
                             <div className="w-20 h-20 rounded-full bg-white overflow-hidden mb-4">
                                 <img
                                     src="https://via.placeholder.com/80"

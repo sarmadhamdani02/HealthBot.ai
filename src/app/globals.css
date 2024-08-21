@@ -8,6 +8,32 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+.neon-border {
+  position: relative;
+  border-right: 2px solid transparent;
+  border-image: linear-gradient(45deg, #ff00ff, #00ffff, #00ff00, #ffff00) 1;
+  animation: neon-move 5s ease-in-out infinite;
+}
+
+/* Keyframes for the animation */
+@keyframes neon-move {
+  0% {
+    border-image: linear-gradient(45deg, #ff00ff, #00ffff, #00ff00, #ffff00) 1;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.8);
+  }
+  50% {
+    border-image: linear-gradient(135deg, #00ffff, #00ff00, #ffff00, #ff00ff) 1;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 0, 0.8);
+  }
+  100% {
+    border-image: linear-gradient(45deg, #ff00ff, #00ffff, #00ff00, #ffff00) 1;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.8);
+  }
+}
+
+
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;

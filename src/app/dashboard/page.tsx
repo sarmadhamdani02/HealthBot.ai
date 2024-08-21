@@ -1,27 +1,48 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import SideNavbar from '@/components/Drawer';
-
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RiArrowLeftSLine } from '@remixicon/react';
 
 const HealthBotDashboard = () => {
+    const [showDrawer, setShowDrawer] = useState(false);
+
     return (
-        <div className="min-h-screen bg-white p-4">
-            <SideNavbar/>
-            <header className="flex justify-between items-center py-4">
-            
-                <button className="text-[#00DB0F] text-2xl">
-                    <i className="fas fa-bars"></i>
-                </button>
-                
-                <h1 className="text-[#00DB0F]  absolute left-[40%] text-3xl font-bold">HealthBot</h1>
-                <span className="text-[#00DB0F] text-xl">UserName</span>
+        <div className="min-h-screen bg-white p-4 relative">
+            {/* SideNavbar */}
+            {showDrawer && (
+                <div className="fixed inset-0 z-40">
+                    <SideNavbar />
+                </div>
+            )}
+
+            {/* Header */}
+            <header className="flex justify-between items-center py-4 relative z-50">
+                {/* Conditional rendering of icons */}
+                {showDrawer ? (
+                    <RiArrowLeftSLine
+                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
+                        onClick={() => setShowDrawer(false)}
+                    />
+                ) : (
+                    <GiHamburgerMenu
+                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
+                        onClick={() => setShowDrawer(true)}
+                    />
+                )}
+
+                <h1 className="text-[#00DB0F] absolute left-[50%] transform -translate-x-[50%] text-3xl font-bold z-100">HealthBot</h1>
+                <span className="text-[#00DB0F] text-xl absolute right-4 top-4 z-50">UserName</span>
             </header>
-           
-            <section className="flex flex-col items-center">
+
+            {/* Main content */}
+            <section className="flex flex-col items-center z-10">
                 {/* Cards Section */}
                 <div className="flex flex-wrap justify-center gap-4 mb-8 mt-8">
                     {Array(3).fill(null).map((_, i) => (
-                        <div key={i} className="w-64 bg-[#00DB</section>0F] text-white p-4 rounded-lg flex flex-col items-center">
+                        <div key={i} className="w-64 bg-[#00DB0F] text-white p-4 rounded-lg flex flex-col items-center">
                             <div className="w-20 h-20 rounded-full bg-white overflow-hidden mb-4">
                                 <img
                                     src="https://via.placeholder.com/80"
@@ -50,14 +71,15 @@ const HealthBotDashboard = () => {
                 </div>
             </section>
 
-            <div className=' text-[#00DB0F] '>
+            {/* Links */}
+            <div className='text-[#00DB0F]'>
                 <Link className='hover:underline' href={'/dashboard'}>Dashboard </Link>
                 <Link className='hover:underline text-black' href={'/chatscreen'}>Chat Screen </Link>
-                <Link className='hover:underline ' href={'/doctorscreen'}>Doctor Screen </Link>
-                <Link className='hover:underline text-black ' href={'/profile'}>Profile </Link>
-                <Link className='hover:underline ' href={'/login'}>Login </Link>
-                <Link className='hover:underline ' href={'/signup'}>Signup </Link>
-                <Link className='hover:underline ' href={'/OTP'}>OTP Screen </Link>
+                <Link className='hover:underline' href={'/doctorscreen'}>Doctor Screen </Link>
+                <Link className='hover:underline text-black' href={'/profile'}>Profile </Link>
+                <Link className='hover:underline' href={'/login'}>Login </Link>
+                <Link className='hover:underline' href={'/signup'}>Signup </Link>
+                <Link className='hover:underline' href={'/OTP'}>OTP Screen </Link>
             </div>
         </div>
     );

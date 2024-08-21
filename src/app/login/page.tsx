@@ -1,4 +1,6 @@
 import React from 'react';
+import { RiGoogleFill } from '@remixicon/react';
+
 
 const LoginForm = () => {
   return (
@@ -26,7 +28,7 @@ const LoginForm = () => {
         </button>
         <div className="flex justify-center mt-6">
           <button className="bg-[#00DB0F] p-2 rounded-full">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="G logo" />
+            <RiGoogleFill className=' text-white w-6 h-auto' />
           </button>
         </div>
         <p className="text-center mt-4 text-gray-600">

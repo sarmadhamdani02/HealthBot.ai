@@ -7,10 +7,10 @@ import { getSession } from 'next-auth/react';
 
 
 const LoginForm = async() => {
-  const session= await getSession();
-  console.log('***********', session);
-  const user = session?.user;
-  if(user) redirect('/');
+  // const session= await getSession();
+  // console.log('***********', session);
+  // const user = session?.user;
+  // if(user) redirect('/');
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
@@ -22,6 +22,7 @@ const LoginForm = async() => {
       
       <div className="bg-white w-full max-w-md p-8 rounded-md shadow-md">
       <form action={login}>
+        <div>
         <div className="space-y-4">
         
           <input
@@ -42,6 +43,7 @@ const LoginForm = async() => {
         <button className="mt-6 w-full bg-[#00DB0F] text-white py-2 rounded-lg hover:bg-[#00DB0F]/90 transition duration-200">
           Login
         </button>
+        </div>
         </form>
         <form
         action={async () => {

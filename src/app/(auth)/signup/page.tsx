@@ -6,10 +6,10 @@ import { redirect } from 'next/navigation';
 import { getSession } from 'next-auth/react';
 
 const SignUpForm = async() => {
-  const session= await getSession();
-  console.log('***********', session);
-  const user = session?.user;
-  if(user) redirect('/');
+  // const session= await getSession();
+  // console.log('***********', session);
+  // const user = session?.user;
+  // if(user) redirect('/');
   return (
     
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">

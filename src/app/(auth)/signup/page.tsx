@@ -1,8 +1,15 @@
 import React from 'react';
 import { RiGoogleFill } from '@remixicon/react';
 import { register } from '@/action/user';
+import { auth, signIn } from '@/auth';
+import { redirect } from 'next/navigation';
+import { getSession } from 'next-auth/react';
 
-const SignUpForm = () => {
+const SignUpForm = async() => {
+  const session= await getSession();
+  console.log('***********', session);
+  const user = session?.user;
+  if(user) redirect('/');
   return (
     
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
@@ -62,11 +69,18 @@ const SignUpForm = () => {
         </button>
         </div>
         </form>
+        <form
+        action={async () => {
+          "use server";
+          await signIn("google");
+        }}
+      >
         <div className="flex justify-center mt-6">
           <button className="bg-[#00DB0F] p-2 rounded-full">
           <RiGoogleFill className=' text-white w-6 h-auto' />
           </button>
         </div>
+        </form>
         <p className="text-center mt-4 text-gray-600">
           already have an account?{' '}
           <a href="/login" className="text-[#00DB0F] font-semibold">Log in</a>

@@ -8,10 +8,11 @@ import { CredentialsSignin } from "next-auth";
 import { signIn } from "@/auth";
 
 const login = async (formData: FormData) => {
-    const email = formData.get("loginemail") as string;
-    const password = formData.get("loginpassword") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
   
     try {
+      console.log('defbug..')
       await signIn("credentials", {
         redirect: false,
         callbackUrl: "/",

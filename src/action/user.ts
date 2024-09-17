@@ -12,7 +12,6 @@ const login = async (formData: FormData) => {
     const password = formData.get("password") as string;
   
     try {
-      console.log('defbug..')
       await signIn("credentials", {
         redirect: false,
         callbackUrl: "/",
@@ -23,7 +22,7 @@ const login = async (formData: FormData) => {
       const someError = error as CredentialsSignin;
       return someError.cause;
     }
-    redirect("/");
+    redirect("/dashboard");
   };
 
 const register = async (formData: FormData) => {
@@ -34,11 +33,6 @@ const register = async (formData: FormData) => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmpassword') as string;
-    console.log(firstName)
-    console.log(lastName)
-    console.log(email)
-    console.log(password)
-    console.log(confirmPassword)
     await dbConnect();
     //searching for existing user
     const existingUser = await User.findOne({email})

@@ -48,11 +48,12 @@ const LoginForm = async() => {
         <form
         action={async () => {
           "use server";
-          await signIn("google");
+          await signIn("google", {redirectTo:'/dashboard'});
+          // redirect('/dashboard')
         }}
       >
         <div className="flex justify-center mt-6">
-          <button className="bg-[#00DB0F] p-2 rounded-full">
+          <button  className="bg-[#00DB0F] p-2 rounded-full">
             <RiGoogleFill className=' text-white w-6 h-auto' />
           </button>
         </div>

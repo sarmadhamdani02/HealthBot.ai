@@ -45,7 +45,7 @@ const LoginForm = async() => {
         </button>
         </div>
         </form>
-        <form
+        {/* <form
         action={async () => {
           "use server";
           await signIn("google", {redirectTo:'/dashboard'});
@@ -57,7 +57,7 @@ const LoginForm = async() => {
             <RiGoogleFill className=' text-white w-6 h-auto' />
           </button>
         </div>
-        </form> 
+        </form>  */}
         <p className="text-center mt-4 text-gray-600">
           do not have an account?{' '}
           <a href="/signup" className="text-[#00DB0F] font-semibold">sign up</a>

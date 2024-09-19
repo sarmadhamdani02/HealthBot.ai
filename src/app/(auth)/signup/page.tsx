@@ -69,7 +69,7 @@ const SignUpForm = async() => {
         </button>
         </div>
         </form>
-        <form
+        {/* <form
         action={async () => {
           "use server";
           await signIn("google");
@@ -80,7 +80,7 @@ const SignUpForm = async() => {
           <RiGoogleFill className=' text-white w-6 h-auto' />
           </button>
         </div>
-        </form>
+        </form> */}
         <p className="text-center mt-4 text-gray-600">
           already have an account?{' '}
           <a href="/login" className="text-[#00DB0F] font-semibold">Log in</a>

@@ -8,11 +8,7 @@ import { JWT } from "next-auth/jwt";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-      
-    }),
+
     Credentials({
       name: 'Credentials',
 
@@ -61,44 +57,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages:{
     signIn:"/login",
   },
-  callbacks: {
-    async session({ session, token }: { session: any, token: JWT }) {
-      if (token?.sub && token.role) {
-        session.user.id = token.sub;
-        session.user.role = token.role;
-      }
-      return session;
-    },
-    async jwt({ token, user }: { token: JWT, user?: any }) {
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
-    },
-  
-    async signIn({ user, account }) {
-    if (account?.provider === "google") {
-      try {
-        const { email, name, image, id } = user;
-        await dbConnect();
-        const alreadyUser = await User.findOne({ email });
-
-        if (!alreadyUser) {
-          await User.create({ email, name, image, authProviderId: id });
-        } else {
-          return true;
-        }
-      } catch (error) {
-        throw new Error("Error while creating user");
-      }
-    }
-
-    if (account?.provider === "credentials") {
-      return true;
-    } else {
-      return false;
-    }
-  },
-},
 }
 );

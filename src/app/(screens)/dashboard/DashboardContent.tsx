@@ -1,24 +1,17 @@
-"use client"; // This marks the component as a Client Component
+// src/app/(screens)/dashboard/DashboardContent.tsx
+"use client"; // Mark this as a Client Component
 
-import React, { useState, useEffect } from 'react';
-// import { cookies } from 'next/headers';
-import SideNavbar from '@/components/Drawer'; // Import the SideNavbar
-// import { redirect } from 'next/navigation';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import SideNavbar from '@/components/Drawer';
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RiArrowLeftSLine } from '@remixicon/react';
 
-const HealthBotDashboard = () => {
-    // const sessionCookie = cookies().get('firebase-session')?.value;
+const DashboardContent = () => {
     const [showDrawer, setShowDrawer] = useState(false);
-    
-    // Redirect if sessionCookie is not available
-    // useEffect(() => {
-    //     if (!sessionCookie) {
-    //         redirect('/');
-    //     }
-    // }, [sessionCookie]);
 
     return (
-        <div className="min-h-screen bg-white p-4 relative">
+        <>
             {/* SideNavbar */}
             {showDrawer && (
                 <div className="fixed inset-0 z-40">
@@ -28,13 +21,18 @@ const HealthBotDashboard = () => {
 
             {/* Header */}
             <header className="flex justify-between items-center py-4 relative z-50">
-                {/* Toggle Drawer */}
-                <button
-                    className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
-                    onClick={() => setShowDrawer(!showDrawer)}
-                >
-                    {showDrawer ? 'Close' : 'Menu'}
-                </button>
+                {/* Conditional rendering of icons */}
+                {showDrawer ? (
+                    <RiArrowLeftSLine
+                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
+                        onClick={() => setShowDrawer(false)}
+                    />
+                ) : (
+                    <GiHamburgerMenu
+                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
+                        onClick={() => setShowDrawer(true)}
+                    />
+                )}
 
                 <h1 className="text-[#00DB0F] text-3xl font-bold z-100 mx-auto md:absolute md:left-[50%] md:transform md:-translate-x-[50%]">HealthBot</h1>
                 <span className="text-[#00DB0F] text-xl absolute right-4 top-4 z-50">UserName</span>
@@ -64,7 +62,7 @@ const HealthBotDashboard = () => {
                 <div className="w-full max-w-md bg-[#C7FECF] p-6 rounded-lg">
                     <h2 className="text-[#00DB0F] text-lg font-semibold mb-4">Start from where you left</h2>
                     <div className="flex flex-col gap-4">
-                        {['What is computer', 'Chat1', 'Chat2'].map((text, index) => (
+                        {['What is computer', 'Chat1', 'Chat1'].map((text, index) => (
                             <div key={index} className="flex justify-between items-center bg-[#00DB0F] text-white p-3 rounded-lg">
                                 <span>{text}</span>
                                 <button className="bg-white text-[#00DB0F] py-2 px-4 rounded-lg">Go to chat</button>
@@ -84,8 +82,8 @@ const HealthBotDashboard = () => {
                 <Link className='hover:underline' href={'/signup'}>Signup</Link>
                 <Link className='hover:underline' href={'/OTP'}>OTP Screen</Link>
             </div>
-        </div>
+        </>
     );
 };
 
-export default HealthBotDashboard;
+export default DashboardContent;

@@ -1,16 +1,40 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useTransition } from 'react';
 import { RiGoogleFill } from '@remixicon/react';
-import { login } from '@/action/user';
-import { auth, signIn } from '@/auth';
-import { redirect } from "next/navigation";
-import { getSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../../lib/firebase';
+import { signinAction } from '@/app/auth/signin/signin-action';
 
+const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-const LoginForm = async() => {
-  // const session= await getSession();
-  // console.log('***********', session);
-  // const user = session?.user;
-  // if(user) redirect('/');
+  const handleEmailSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    startTransition(async () => {
+      try {
+        await signinAction({ email, password });
+        router.push('/dashboard');
+      } catch (error) {
+        console.error('Error signing in with email/password:', error);
+        // Add some UI error handling here
+      }
+    });
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+      // Add some UI error handling here
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
@@ -21,49 +45,43 @@ const LoginForm = async() => {
       </header>
       
       <div className="bg-white w-full max-w-md p-8 rounded-md shadow-md">
-      <form action={login}>
-        <div>
-        <div className="space-y-4">
-        
-          <input
-            id = "email"
-            type="email"
-            placeholder="Enter Email"
-            className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
-            name="email"         
-         />
-          <input
-            id = "password"
-            type="password"
-            placeholder="Enter Password"
-            className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
-            name="password"
-          />
-        </div>
-        <button className="mt-6 w-full bg-[#00DB0F] text-white py-2 rounded-lg hover:bg-[#00DB0F]/90 transition duration-200">
-          Login
-        </button>
-        </div>
+        <form onSubmit={handleEmailSignIn}>
+          <div className="space-y-4">
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter Email"
+              className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
+              name="email"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter Password"
+              className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
+              name="password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" disabled={isPending} className="mt-6 w-full bg-[#00DB0F] text-white py-2 rounded-lg hover:bg-[#00DB0F]/90 transition duration-200">
+            {isPending ? 'Signing in...' : 'Sign in with Email'}
+          </button>
         </form>
-        {/* <form
-        action={async () => {
-          "use server";
-          await signIn("google", {redirectTo:'/dashboard'});
-          // redirect('/dashboard')
-        }}
-      >
+        
         <div className="flex justify-center mt-6">
-          <button  className="bg-[#00DB0F] p-2 rounded-full">
-            <RiGoogleFill className=' text-white w-6 h-auto' />
+          <button onClick={handleGoogleSignIn} className="bg-[#00DB0F] p-2 rounded-full">
+            <RiGoogleFill className='text-white w-6 h-auto' />
           </button>
         </div>
-        </form>  */}
+        
         <p className="text-center mt-4 text-gray-600">
-          do not have an account?{' '}
-          <a href="/signup" className="text-[#00DB0F] font-semibold">sign up</a>
+          Do not have an account?{' '}
+          <a href="/signup" className="text-[#00DB0F] font-semibold">Sign up</a>
         </p>
       </div>
-      
     </div>
   );
 };

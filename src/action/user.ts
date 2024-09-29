@@ -1,11 +1,12 @@
 "use server";
 
-import dbConnect from "@/lib/dbConnect";
+
 import { redirect } from "next/navigation";
 import {hash} from "bcryptjs";
 import User from "@/models/User";
 import { CredentialsSignin } from "next-auth";
 import { signIn } from "@/auth";
+import dbConnect from '@/lib/dbconnect';
 
 const login = async (formData: FormData) => {
     const email = formData.get("email") as string;
@@ -24,7 +25,12 @@ const login = async (formData: FormData) => {
     }
     redirect("/dashboard");
   };
+const doSocialLogin=async(formData:FormData)=>{
+  const action =formData.get('action');
+}
+const doLogout = async ()=>{
 
+}
 const register = async (formData: FormData) => {
 
 

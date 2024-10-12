@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
 import { RiGoogleFill } from '@remixicon/react';
@@ -13,24 +13,27 @@ export default function SignUpForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null); // Add error state
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null); // Reset error state
-  startTransition(async () => {
-    try {
-      const user = await signupAction({ firstName, lastName, email, password });
-      console.log(user); // This should now log a plain object
-      router.push('/login');
-    } catch (error: any) {
-      console.error('Sign-up error:', error.message);
-      setError(error.message); // Set error message to state
-    }
-  });
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null); // Reset error state
+    startTransition(async () => {
+      try {
+        const { token } = await signupAction({ firstName, lastName, email, password });
+        
+        // Set the cookie with the token
+        document.cookie = `firebase-session=${token}; path=/;`;
 
+        // Redirect to login after successful sign-up
+       redirect("/login")
+      } catch (error: any) {
+        console.error('Sign-up error:', error.message);
+        setError(error.message); // Set error message to state
+      }
+    });
+  };
 
   const handleGoogleSignIn = async () => {
     try {

@@ -1,11 +1,11 @@
 // signup-action.ts
 'use server';
 
-import dbConnect from '@/lib/dbconnect';
+import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { hash } from 'bcryptjs';
 import { auth } from '../../../lib/firebase'; 
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword,getIdToken, sendEmailVerification } from 'firebase/auth';
 
 interface SignupData {
   firstName: string;
@@ -15,6 +15,7 @@ interface SignupData {
 }
 
 export async function signupAction({ firstName, lastName, email, password }: SignupData) {
+  
   await dbConnect();
 
   const existingUser = await User.findOne({ email });
@@ -23,9 +24,14 @@ export async function signupAction({ firstName, lastName, email, password }: Sig
   }
 
   const hashedPassword = await hash(password, 12);
-
+let token = 'aaa';
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    await sendEmailVerification(user);
+
+    // Get the ID token from Firebase Auth
+    token = await getIdToken(user);
   } catch (error) {
     console.error('Error creating user in Firebase:', error);
     throw new Error('Failed to create user in Firebase');
@@ -44,5 +50,6 @@ export async function signupAction({ firstName, lastName, email, password }: Sig
     firstname: newUser.firstname,
     lastname: newUser.lastname,
     email: newUser.email,
+    token:token
   };
 }

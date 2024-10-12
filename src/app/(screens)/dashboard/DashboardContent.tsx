@@ -3,19 +3,38 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import SideNavbar from '@/components/Drawer';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RiArrowLeftSLine } from '@remixicon/react';
-
+import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth'; 
+import { auth } from "@/lib/firebase"; 
+import { redirect } from 'next/navigation';
 const DashboardContent = () => {
     const [showDrawer, setShowDrawer] = useState(false);
+    const router = useRouter();
 
+    const handleLogout = async () => {
+         try {
+            // Clear all cookies in the browser
+            document.cookie.split(";").forEach((c) => {
+                document.cookie = c
+                    .replace(/^ +/, "")
+                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+            await signOut(auth);
+            router.push('/login')
+            console.log("line after signOut")
+
+            redirect('/login'); 
+        } catch (error) {
+            console.error("Logout error: ", error);
+        }
+    };
     return (
         <>
             {/* SideNavbar */}
             {showDrawer && (
                 <div className="fixed inset-0 z-40">
-                    <SideNavbar />
                 </div>
             )}
 
@@ -35,7 +54,7 @@ const DashboardContent = () => {
                 )}
 
                 <h1 className="text-[#00DB0F] text-3xl font-bold z-100 mx-auto md:absolute md:left-[50%] md:transform md:-translate-x-[50%]">HealthBot</h1>
-                <span className="text-[#00DB0F] text-xl absolute right-4 top-4 z-50">UserName</span>
+                <span  className="text-[#00DB0F] text-xl absolute right-4 top-4 z-50"><button onClick={handleLogout}>Logout</button></span>
             </header>
 
             {/* Main content */}

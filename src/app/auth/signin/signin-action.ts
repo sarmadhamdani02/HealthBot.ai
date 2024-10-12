@@ -16,24 +16,14 @@ export async function signinAction({ email, password }: SignInData) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
-    
     // Get the ID token
-     token = await getIdToken(user);
+    token = await getIdToken(user);
 
-    // Set the token in cookies
-    // setCookie(null, 'token', token, {
-    //   maxAge: 30 * 24 * 60 * 60, // 30 days
-    //   path: '/', // Available across the site
-    // });
-
-    // Optionally, you can redirect the user after signing in
-    // You can return a response object for redirecting if you are using an API route
     return {
       uid: userCredential.user.uid,
       email: userCredential.user.email,
       displayName: userCredential.user.displayName,
-      token, // Include the ID token in the response
+      token:token, // Include the ID token in the response
       redirect: '/dashboard', // Redirect to the dashboard after successful sign-in
     };
   } catch (error) {

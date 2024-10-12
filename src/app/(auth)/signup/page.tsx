@@ -35,17 +35,49 @@ export default function SignUpForm() {
     });
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
-      // Handle Google sign-in errors
+const handleGoogleSignIn = async () => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    // Extract user data from Firebase
+    const userData = {
+      firstname: user.displayName?.split(' ')[0] || '',
+      lastname: user.displayName?.split(' ')[1] || '',
+      email: user.email || '',
+      image: user.photoURL || '',  // Store the Google profile image URL
+      authProviderId: user.uid,    // Store the Google provider UID
+    };
+
+    // Get the ID token from Firebase
+    const token = await user.getIdToken();
+
+    // Set the cookie with the token
+    document.cookie = `firebase-session=${token}; path=/;`;
+
+    // Send user data to your MongoDB API
+    const response = await fetch('/api/users/google-signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save user data to MongoDB');
     }
-  };
+
+    // Redirect to dashboard on successful sign-in and save to MongoDB
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+  }
+};
+
 
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <header className="w-full flex justify-between p-6">
         <div />

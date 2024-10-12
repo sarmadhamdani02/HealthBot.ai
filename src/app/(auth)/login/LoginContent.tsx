@@ -74,6 +74,8 @@ const LoginContent = () => {
             {isPending ? 'Signing in...' : 'Sign in with Email'}
           </button>
         </form>
+        <button className="text-[#00DB0F]" onClick={()=>router.push("/forgot-password")}>forgot password</button>
+
 
         <div className="flex justify-center mt-6">
           <button onClick={handleGoogleSignIn} className="bg-[#00DB0F] p-2 rounded-full">

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase'; // Path to your firebase config
+import { auth } from '@/lib/firebase'; 
 import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -13,11 +13,10 @@ const ResetPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  
   // Get oobCode from URL
   const oobCode = searchParams.get('oobCode');
 
-  // Validate the oobCode (reset code) on mount
   useEffect(() => {
     if (!oobCode) {
       setError('Invalid or missing password reset code.');
@@ -38,12 +37,14 @@ const ResetPassword = () => {
       if (!oobCode) {
         throw new Error('Invalid or missing password reset code.');
       }
-
+      
       await confirmPasswordReset(auth, oobCode, newPassword);
       setMessage('Password reset successful! You can now log in with your new password.');
       router.push('/login');
     } catch (error: any) {
-      setError(error.message || 'Failed to reset password.');
+      // Enhanced error handling
+      setError(error.message || 'Failed to reset password. Please check your connection.');
+      console.error("Reset password error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -63,7 +64,7 @@ const ResetPassword = () => {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
-          className="border p-2 w-full mb-4 rounded"
+          className="text-black border p-2 w-full mb-4 rounded"
         />
         <button
           type="submit"

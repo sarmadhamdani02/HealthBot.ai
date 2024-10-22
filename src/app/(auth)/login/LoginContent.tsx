@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { RiGoogleFill } from '@remixicon/react';
-import { useRouter , redirect } from 'next/navigation'; 
+import { useRouter } from 'next/navigation'; 
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
 import { signinAction } from '@/app/auth/signin/signin-action'; 
@@ -11,35 +11,77 @@ const LoginContent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null); // Error state
   const router = useRouter();
 
-  const handleEmailSignIn = (e: React.FormEvent) => {
+  const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null); // Reset error state
     startTransition(async () => {
       try {
         const { token } = await signinAction({ email, password  });
         
         // Set the cookie with the token
-        document.cookie = `firebase-session=${token}; path=/;`; 
-        router.push('/dashboard')
+        document.cookie = `firebase-session=${token}; path=/`; 
+        router.push('/dashboard');
       } catch (error: any) {
-        console.error('Sign-up error:', error.message); 
+        console.error('Login error:', error.message);
+        setError(error.message); // Set error message to state
       }
     }); 
   };
 
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     await signInWithPopup(auth, googleProvider);
+
+  //     // Set session in localStorage (or cookies can be set in server-side)
+  //     localStorage.setItem('firebase-session', 'true'); // Replace with actual token
+  //     router.push('/dashboard');
+  //   } catch (error) {
+  //     console.error('Error signing in with Google:', error);
+  //     setError('Error signing in with Google. Please try again.'); // Set error message
+  //   }
+  // };
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-
-      // Set session in localStorage (or cookies can be set in server-side)
-      localStorage.setItem('firebase-session', 'true'); // Replace with actual token
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+  
+      // Extract user data from Firebase
+      const userData = {
+        firstname: user.displayName?.split(' ')[0] || '',
+        lastname: user.displayName?.split(' ')[1] || '',
+        email: user.email || '',
+        image: user.photoURL || '',  // Store the Google profile image URL
+        authProviderId: user.uid,    // Store the Google provider UID
+      };
+  
+      // Get the ID token from Firebase
+      const token = await user.getIdToken();
+  
+      // Set the cookie with the token
+      document.cookie = `firebase-session=${token}; path=/;`;
+  
+      // Send user data to your MongoDB API
+      const response = await fetch('/api/users/google-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to save user data to MongoDB');
+      }
+  
+      // Redirect to dashboard on successful sign-in and save to MongoDB
       router.push('/dashboard');
     } catch (error) {
       console.error('Error signing in with Google:', error);
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <header className="w-full flex justify-between p-6">
@@ -49,6 +91,7 @@ const LoginContent = () => {
       </header>
 
       <div className="bg-white w-full max-w-md p-8 rounded-md shadow-md">
+        {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
         <form onSubmit={handleEmailSignIn}>
           <div className="space-y-4">
             <input
@@ -74,8 +117,7 @@ const LoginContent = () => {
             {isPending ? 'Signing in...' : 'Sign in with Email'}
           </button>
         </form>
-        <button className="text-[#00DB0F]" onClick={()=>router.push("/forgot-password")}>forgot password</button>
-
+        <button className="text-[#00DB0F]" onClick={()=>router.push("/forgot-password")}>Forgot password?</button>
 
         <div className="flex justify-center mt-6">
           <button onClick={handleGoogleSignIn} className="bg-[#00DB0F] p-2 rounded-full">

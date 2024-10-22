@@ -28,6 +28,10 @@ export async function signinAction({ email, password }: SignInData) {
     };
   } catch (error) {
     console.error('Sign-in error:', error);
-    throw new Error('Failed to sign in');
+    if (error instanceof Error) {
+      throw new Error('Failed to sign in: ' + error.toString());
+    } else {
+      throw new Error('Failed to sign in: Unknown error');
+    }
   }
 }

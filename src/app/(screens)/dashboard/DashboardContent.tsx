@@ -94,9 +94,9 @@ const DashboardContent = () => {
             {/* Links */}
             <div className='text-[#00DB0F] flex flex-wrap justify-center gap-4 mt-8'>
                 <Link className='hover:underline' href={'/dashboard'}>Dashboard</Link>
-                <Link className='hover:underline text-black' href={'/chatscreen'}>Chat Screen</Link>
+                <Link className='hover:underline ' href={'/chatscreen'}>Chat Screen</Link>
                 <Link className='hover:underline' href={'/doctorscreen'}>Doctor Screen</Link>
-                <Link className='hover:underline text-black' href={'/profile'}>Profile</Link>
+                <Link className='hover:underline ' href={'/profile'}>Profile</Link>
                 <Link className='hover:underline' href={'/login'}>Login</Link>
                 <Link className='hover:underline' href={'/signup'}>Signup</Link>
                 <Link className='hover:underline' href={'/OTP'}>OTP Screen</Link>

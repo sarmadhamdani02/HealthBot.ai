@@ -1,107 +1,111 @@
-// src/app/(screens)/dashboard/DashboardContent.tsx
-"use client"; // Mark this as a Client Component
+"use client"
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { GiHamburgerMenu } from "react-icons/gi";
-import { RiArrowLeftSLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth'; 
-import { auth } from "@/lib/firebase"; 
-import { redirect } from 'next/navigation';
+import { signOut } from 'firebase/auth';
+import { auth } from "@/lib/firebase";
+import Header from '@/app/components/Header';
+import DoctorAppointmentCard from '@/app/components/DoctorAppointmentCard';
+import { MessageSquare, ChevronRight, Calendar } from 'lucide-react';
+
+const doctors = [
+
+    {
+        name: 'Dr. Marnus',
+        location: 'Block A, Green Street • 2.0 km',
+        appointmentDate: '2024-08-14',
+        time: '2:30 PM',
+        phone: '+1 (555) 234-5678',
+        imageUrl: 'https://via.placeholder.com/80?text=Dr2'
+    },
+    {
+        name: 'Dr. Amad Rehman',
+        location: 'Main Road, Sector 5 • 3.5 km',
+        appointmentDate: '2024-08-15',
+        time: '11:15 AM',
+        phone: '+1 (555) 345-6789',
+        imageUrl: 'https://via.placeholder.com/80?text=Dr3'
+    }
+];
+
 const DashboardContent = () => {
-    const [showDrawer, setShowDrawer] = useState(false);
     const router = useRouter();
 
     const handleLogout = async () => {
-         try {
-            // Clear all cookies in the browser
+        try {
             document.cookie.split(";").forEach((c) => {
                 document.cookie = c
                     .replace(/^ +/, "")
                     .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
             });
             await signOut(auth);
-            router.push('/login')
-            console.log("line after signOut")
-
-            redirect('/login'); 
+            router.push('/login');
         } catch (error) {
             console.error("Logout error: ", error);
         }
     };
+
     return (
-        <>
-            {/* SideNavbar */}
-            {showDrawer && (
-                <div className="fixed inset-0 z-40">
-                </div>
-            )}
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+            <Header />
 
-            {/* Header */}
-            <header className="flex justify-between items-center py-4 relative z-50">
-                {/* Conditional rendering of icons */}
-                {showDrawer ? (
-                    <RiArrowLeftSLine
-                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
-                        onClick={() => setShowDrawer(false)}
-                    />
-                ) : (
-                    <GiHamburgerMenu
-                        className="text-[#00DB0F] cursor-pointer hover:text-[#00db0fc7] w-6 h-auto absolute left-4 top-4 z-50"
-                        onClick={() => setShowDrawer(true)}
-                    />
-                )}
-
-                <h1 className="text-[#00DB0F] text-3xl font-bold z-100 mx-auto md:absolute md:left-[50%] md:transform md:-translate-x-[50%]">HealthBot</h1>
-                <span  className="text-[#00DB0F] text-xl absolute right-4 top-4 z-50"><button onClick={handleLogout}>Logout</button></span>
-            </header>
-
-            {/* Main content */}
-            <section className="flex flex-col items-center z-10">
-                {/* Cards Section */}
-                <div className="flex flex-wrap justify-center gap-4 mb-8 mt-8 w-full">
-                    {Array(3).fill(null).map((_, i) => (
-                        <div key={i} className="w-full sm:w-1/2 lg:w-1/3 bg-[#00DB0F] text-white p-4 rounded-lg flex flex-col items-center">
-                            <div className="w-20 h-20 rounded-full bg-white overflow-hidden mb-4">
-                                <img
-                                    src="https://via.placeholder.com/80"
-                                    alt="Doctor"
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                            <h2 className="text-lg font-semibold">Dr. Kamlesh</h2>
-                            <p className="text-sm text-center">street no 1 z colony<br />1.5km</p>
-                            <p className="mt-2 text-xl font-bold">13-8-24</p>
+            <main className="container mx-auto px-4 pt-24 pb-8 space-y-8">
+                {/* Appointments Section */}
+                <section className="bg-white rounded-lg shadow-sm border border-emerald-100 overflow-hidden">
+                    <div className="border-b border-emerald-100 p-4">
+                        <div className="flex items-center gap-2">
+                            <Calendar className="w-6 h-6 text-emerald-600" />
+                            <h2 className="text-xl font-semibold text-gray-800">Upcoming Appointments</h2>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                    
+                    <div className="p-4">
+                        {doctors.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-4">
+                                {doctors.map((doctor, i) => (
+                                    <DoctorAppointmentCard key={i} doctor={doctor} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-white/50 border-dashed border-2 border-emerald-200 rounded-lg">
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <Calendar className="w-12 h-12 text-emerald-400 mb-4" />
+                                    <h3 className="text-xl font-medium text-gray-600 mb-2">No Upcoming Appointments</h3>
+                                    <p className="text-gray-500">Schedule your next appointment with our healthcare providers</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
 
                 {/* Chat Section */}
-                <div className="w-full max-w-md bg-[#C7FECF] p-6 rounded-lg">
-                    <h2 className="text-[#00DB0F] text-lg font-semibold mb-4">Start from where you left</h2>
-                    <div className="flex flex-col gap-4">
+                <section className="bg-white rounded-lg shadow-sm border border-emerald-100">
+                    <div className="border-b border-emerald-100 p-4">
+                        <div className="flex items-center gap-2">
+                            <MessageSquare className="w-6 h-6 text-emerald-600" />
+                            <h2 className="text-xl font-semibold text-gray-800">Recent Conversations</h2>
+                        </div>
+                    </div>
+                    <div className="p-4 space-y-3">
                         {['What is computer', 'Chat1', 'Chat1'].map((text, index) => (
-                            <div key={index} className="flex justify-between items-center bg-[#00DB0F] text-white p-3 rounded-lg">
-                                <span>{text}</span>
-                                <button className="bg-white text-[#00DB0F] py-2 px-4 rounded-lg">Go to chat</button>
+                            <div
+                                key={index}
+                                className="flex justify-between items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                    <span className="text-gray-700 font-medium">{text}</span>
+                                </div>
+                                <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-colors">
+                                    <span className="text-sm font-medium">Continue</span>
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
                             </div>
                         ))}
                     </div>
-                </div>
-            </section>
-
-            {/* Links */}
-            <div className='text-[#00DB0F] flex flex-wrap justify-center gap-4 mt-8'>
-                <Link className='hover:underline' href={'/dashboard'}>Dashboard</Link>
-                <Link className='hover:underline ' href={'/chatscreen'}>Chat Screen</Link>
-                <Link className='hover:underline' href={'/doctorscreen'}>Doctor Screen</Link>
-                <Link className='hover:underline ' href={'/profile'}>Profile</Link>
-                <Link className='hover:underline' href={'/login'}>Login</Link>
-                <Link className='hover:underline' href={'/signup'}>Signup</Link>
-                <Link className='hover:underline' href={'/OTP'}>OTP Screen</Link>
-            </div>
-        </>
+                </section>
+            </main>
+        </div>
     );
 };
 

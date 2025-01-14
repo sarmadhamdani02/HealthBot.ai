@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from "@/lib/firebase";
@@ -8,36 +8,38 @@ import Header from '@/app/components/Header';
 import DoctorAppointmentCard from '@/app/components/DoctorAppointmentCard';
 import { MessageSquare, ChevronRight, Calendar } from 'lucide-react';
 
-const doctors = [
+// Utility function to get bookings from cookies
+const getBookingsFromCookies = () => {
+    if (typeof window === 'undefined') return [];
 
-    {
-        name: 'Dr. Marnus',
-        location: 'Block A, Green Street • 2.0 km',
-        appointmentDate: '2024-08-14',
-        time: '2:30 PM',
-        phone: '+1 (555) 234-5678',
-        imageUrl: 'https://via.placeholder.com/80?text=Dr2'
-    },
-    {
-        name: 'Dr. Amad Rehman',
-        location: 'Main Road, Sector 5 • 3.5 km',
-        appointmentDate: '2024-08-15',
-        time: '11:15 AM',
-        phone: '+1 (555) 345-6789',
-        imageUrl: 'https://via.placeholder.com/80?text=Dr3'
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('bookings='));
+
+    if (cookieValue) {
+        try {
+            return JSON.parse(cookieValue.split('=')[1]);
+        } catch (error) {
+            console.error('Error parsing bookings cookie:', error);
+            return [];
+        }
     }
-];
+    return [];
+};
 
 const DashboardContent = () => {
     const router = useRouter();
+    const [bookings, setBookings] = useState([]);
+
+    useEffect(() => {
+        // Get bookings from cookies when component mounts
+        const cookieBookings = getBookingsFromCookies();
+        console.log('Bookings from cookies:', cookieBookings);
+        setBookings(cookieBookings);
+    }, []);
 
     const handleLogout = async () => {
         try {
-            document.cookie.split(";").forEach((c) => {
-                document.cookie = c
-                    .replace(/^ +/, "")
-                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
             await signOut(auth);
             router.push('/login');
         } catch (error) {
@@ -58,12 +60,11 @@ const DashboardContent = () => {
                             <h2 className="text-xl font-semibold text-gray-800">Upcoming Appointments</h2>
                         </div>
                     </div>
-                    
                     <div className="p-4">
-                        {doctors.length > 0 ? (
+                        {bookings && bookings.length > 0 ? (
                             <div className="grid grid-cols-1 gap-4">
-                                {doctors.map((doctor, i) => (
-                                    <DoctorAppointmentCard key={i} doctor={doctor} />
+                                {bookings.map((booking, i) => (
+                                    <DoctorAppointmentCard key={i} doctor={booking} />
                                 ))}
                             </div>
                         ) : (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Calendar, Clock, Phone, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight } from 'lucide-react';
 
 interface Doctor {
   name: string;
@@ -7,7 +7,6 @@ interface Doctor {
   appointmentDate: string;
   time?: string;
   location: string;
-  phone?: string;
 }
 
 interface DoctorAppointmentCardProps {
@@ -15,13 +14,14 @@ interface DoctorAppointmentCardProps {
 }
 
 const DoctorAppointmentCard: React.FC<DoctorAppointmentCardProps> = ({ doctor }) => {
-  const appointmentDate = new Date(doctor.appointmentDate);
+  const appointmentDate = new Date(doctor.date);
   const formattedDate = appointmentDate.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: '2-digit',
   });
 
+  console.log("Doctos: ",{doctor})
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-emerald-100/50">
       <div className="relative p-6">
@@ -49,7 +49,7 @@ const DoctorAppointmentCard: React.FC<DoctorAppointmentCardProps> = ({ doctor })
             <div className="flex justify-between items-start">
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold text-gray-800 group-hover:text-emerald-700 transition-colors">
-                  {doctor.name}
+                  {doctor.doctorName}
                 </h3>
                 <div className="flex gap-2">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -86,15 +86,8 @@ const DoctorAppointmentCard: React.FC<DoctorAppointmentCardProps> = ({ doctor })
               <div className="flex items-center px-4 py-3 rounded-xl bg-gray-50 hover:bg-emerald-50/50 transition-colors">
                 <MapPin className="w-5 h-5 text-emerald-600 mr-3" />
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Location</p>
+                  <p className="text-xs text-gray-500 font-medium">Attock City</p>
                   <p className="text-sm text-gray-700">{doctor.location}</p>
-                </div>
-              </div>
-              <div className="flex items-center px-4 py-3 rounded-xl bg-gray-50 hover:bg-emerald-50/50 transition-colors">
-                <Phone className="w-5 h-5 text-emerald-600 mr-3" />
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Phone</p>
-                  <p className="text-sm text-gray-700">{doctor.phone || '+1 (555) 000-0000'}</p>
                 </div>
               </div>
             </div>

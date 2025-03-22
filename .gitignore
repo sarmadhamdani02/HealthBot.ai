@@ -1,0 +1,48 @@
+# Node modules  
+node_modules/  
+.next/  
+out/  
+
+# Firebase  
+firebase-debug.log  
+firebase-error.log  
+functions/node_modules/  
+functions/lib/  
+
+# Environment variables  
+.env.local  
+.env.development.local  
+.env.production.local  
+.env.test.local  
+.env  
+
+# Logs  
+npm-debug.log*  
+yarn-debug.log*  
+yarn-error.log*  
+pnpm-debug.log*  
+
+# Editor-specific files  
+.vscode/  
+.idea/      
+*.swp  
+*.swo  
+*.sublime-project  
+*.sublime-workspace  
+
+# Mac system files  
+.DS_Store  
+*.log  
+
+# Build output  
+dist/  
+coverage/  
+
+# Next.js static cache  
+.cache/  
+
+# Firebase emulators & storage  
+firebase-cache/  
+firestore-debug.log  
+storage-debug.log  
+database-debug.log  

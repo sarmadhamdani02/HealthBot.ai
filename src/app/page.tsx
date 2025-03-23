@@ -24,7 +24,7 @@ export default function Home() {
       <header className="container mx-auto flex justify-between items-center py-6 px-6">
         <motion.div whileHover={{ scale: 1.1 }} className="flex items-center gap-2">
           <Bot className="w-8 h-8 text-[#00DB0F]" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#00DB0F] to-[#00DB0F] bg-clip-text text-transparent">HealthBot.ai</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#00DB0F] to-[#00DB0F] bg-clip-text text-transparent">HealthBot</h1>
         </motion.div>
         <div className="space-x-4">
           <Link href="/login">

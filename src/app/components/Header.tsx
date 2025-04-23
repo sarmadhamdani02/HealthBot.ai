@@ -15,9 +15,12 @@ import {
   HelpCircle,
   X
 } from "lucide-react";
+import { auth } from '../../lib/firebase'; // Import the Firebase auth instance
+import { signOut } from 'firebase/auth'; // Import the Firebase signOut function
 
 const Header: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [user, setUser] = useState<{ name: string } | null>(null); // State to hold user data
   const router = useRouter();
   const pathname = usePathname();
 
@@ -31,6 +34,22 @@ const Header: React.FC = () => {
     { href: "/OTP", label: "OTP Screen", icon: <MessageSquare className="w-5 h-5" /> },
   ];
 
+  // Fetch the user data when the component mounts
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        // If the user is logged in, set user info
+        setUser({ name: user.displayName || "Guest" });
+      } else {
+        // If no user is logged in, set to null or Guest
+        setUser(null);
+      }
+    });
+
+    // Clean up the listener on component unmount
+    return () => unsubscribe();
+  }, []);
+
   // Close sidebar when route changes
   useEffect(() => {
     setShowDrawer(false);
@@ -41,11 +60,11 @@ const Header: React.FC = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const sidebar = document.getElementById('sidebar');
       const menuButton = document.getElementById('menu-button');
-      
-      if (sidebar && 
-          !sidebar.contains(event.target as Node) && 
-          menuButton && 
-          !menuButton.contains(event.target as Node)) {
+
+      if (sidebar &&
+        !sidebar.contains(event.target as Node) &&
+        menuButton &&
+        !menuButton.contains(event.target as Node)) {
         setShowDrawer(false);
       }
     };
@@ -84,9 +103,19 @@ const Header: React.FC = () => {
             </h1>
           </div>
 
+
           {/* Logout */}
           <button
-            onClick={() => router.push("/login")}
+            onClick={async () => {
+              try {
+                // Log the user out from Firebase
+                await signOut(auth);
+                // Redirect to login page after successful logout
+                router.push("/login");
+              } catch (error) {
+                console.error("Error signing out: ", error);
+              }
+            }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-emerald-600 hover:bg-emerald-100 transition-colors"
           >
             <LogOut className="w-5 h-5" />
@@ -103,15 +132,15 @@ const Header: React.FC = () => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed top-0 left-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-          showDrawer ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${showDrawer ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Sidebar Header */}
         <div className="p-4 border-b flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Bot className="w-6 h-6 text-emerald-600" />
-            <h2 className="text-lg font-semibold text-emerald-700">Navigation</h2>
+            <h2 className="text-lg font-semibold text-emerald-700">
+              Hello, {user ? user.name : "Guest"}
+            </h2>
           </div>
           <button
             onClick={() => setShowDrawer(false)}
@@ -127,11 +156,7 @@ const Header: React.FC = () => {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors ${
-                pathname === link.href 
-                  ? 'bg-emerald-50 text-emerald-600 border-r-4 border-emerald-600' 
-                  : ''
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors ${pathname === link.href ? 'bg-emerald-50 text-emerald-600 border-r-4 border-emerald-600' : ''}`}
             >
               {link.icon}
               <span className="font-medium">{link.label}</span>

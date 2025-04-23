@@ -8,19 +8,16 @@ import Header from '@/app/components/Header';
 import DoctorAppointmentCard from '@/app/components/DoctorAppointmentCard';
 import { MessageSquare, ChevronRight, Calendar } from 'lucide-react';
 
-// Utility function to get bookings from cookies
-const getBookingsFromCookies = () => {
+// Utility function to get bookings from localStorage based on token
+const getBookingsFromLocalStorage = (token) => {
     if (typeof window === 'undefined') return [];
 
-    const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('bookings='));
-
-    if (cookieValue) {
+    const storedAppointments = localStorage.getItem(token); // Retrieve the appointments using token as key
+    if (storedAppointments) {
         try {
-            return JSON.parse(cookieValue.split('=')[1]);
+            return JSON.parse(storedAppointments); // Parse the stored JSON data
         } catch (error) {
-            console.error('Error parsing bookings cookie:', error);
+            console.error('Error parsing appointments from localStorage:', error);
             return [];
         }
     }
@@ -32,10 +29,19 @@ const DashboardContent = () => {
     const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
-        // Get bookings from cookies when component mounts
-        const cookieBookings = getBookingsFromCookies();
-        console.log('Bookings from cookies:', cookieBookings);
-        setBookings(cookieBookings);
+        let token = document.cookie.split('; ').find(row => row.startsWith('firebase-session=')).split('=')[1];
+        console.log(token);
+
+        // const token = document.cookie.getItem('firebase-session'); // Retrieve the user token from localStorage
+        if (token) {
+            console.log('User token:', token);
+            const userBookings = getBookingsFromLocalStorage(token); // Fetch the bookings associated with the token
+            console.log('Bookings for this user:', userBookings);
+            setBookings(userBookings); // Set the state with the retrieved bookings
+        } else {
+            console.log('No token found');
+            setBookings([]); // If no token is found, reset the bookings
+        }
     }, []);
 
     const handleLogout = async () => {

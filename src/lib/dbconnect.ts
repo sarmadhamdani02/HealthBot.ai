@@ -1,5 +1,3 @@
-
-
 import mongoose from "mongoose";
 
 type connectionObject = {
@@ -15,6 +13,7 @@ async function dbConnect(): Promise<void> {
   }
 
   try {
+    console.log("Mongodb URI: ", process.env.MONGODB_URI);
     const db = await mongoose.connect(process.env.MONGODB_URI || "", {});
 
     connection.isConnect = db.connections[0].readyState;
@@ -27,7 +26,6 @@ async function dbConnect(): Promise<void> {
       error
     );
 
-    process.exit(1); // exit with failure status
   }
 }
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
 import { signinAction } from '@/app/auth/signin/signin-action';
+import Logo from '@/app/components/logo'; // Import the Logo component
 
 const LoginContent = () => {
   const [email, setEmail] = useState('');
@@ -101,7 +102,7 @@ const LoginContent = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <header className="w-full flex justify-between p-6">
         <div />
-        <h1 className="text-[#00DB0F] text-3xl font-bold absolute top-10 left-[40%] justify-center">Welcome Back!</h1>
+        <Logo /> {/* Include the Logo component */}
         <a href="/" className="text-[#00DB0F] font-semibold absolute top-10 right-10 pl-10">HealthBot</a>
       </header>
 

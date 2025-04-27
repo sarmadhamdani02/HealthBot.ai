@@ -5,6 +5,7 @@ import { RiGoogleFill } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
+import Logo from '@/app/components/logo';
 
 const SignupContent = () => {
   const [email, setEmail] = useState('');
@@ -55,7 +56,9 @@ const SignupContent = () => {
         <div />
         <h1 className="text-[#6366F1] text-3xl font-bold absolute top-10 left-[40%]">Create an Account</h1>
         {/* Logo moved to the top-left corner */}
-        <a href="/" className="text-[#6366F1] font-semibold absolute top-10 left-6 pl-10">HealthBot</a>
+        <a href="/" className="text-[#6366F1] font-semibold absolute top-10 left-6 pl-10">
+          <Logo />
+        </a>
       </header>
 
       <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-xl">

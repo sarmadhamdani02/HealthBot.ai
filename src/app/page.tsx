@@ -14,6 +14,7 @@ import {
   Sparkles 
 } from 'lucide-react';
 import React from 'react';
+import Logo from './components/logo';
 
 // Define the icon components map to ensure they're always available
 const iconComponents = {
@@ -59,14 +60,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
       {/* Header */}
       <header className="container mx-auto flex justify-between items-center py-8 px-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-lg">
-            <Bot className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Health<span className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] bg-clip-text text-transparent">Bot</span>
-          </h1>
-        </div>
+        <Logo/>
         <div className="flex items-center gap-4">
           <Link href="/login">
             <button className="text-[#6366F1] font-medium hover:text-[#8B5CF6] transition-colors duration-300">

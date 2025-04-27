@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Header from "@/app/components/Header";
 import { Calendar as CalendarIcon, X, Star, MapPin, Clock, Search } from "lucide-react";
 
-
 // Function to get Firebase token and bookings from cookies
 const getBookingsFromCookies = () => {
   const cookie = document.cookie.split("; ").find(row => row.startsWith("firebase-session="));
@@ -154,7 +153,7 @@ const DoctorContext = () => {
         specialization: "Urologist",
         available: "Tomorrow, 10:00 AM",
     },
-];
+  ];
 
   const handleLogout = async () => {
     try {
@@ -228,7 +227,7 @@ const DoctorContext = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-teal-50">
       <Header />
 
       <div className="container mx-auto px-4 py-6">
@@ -239,11 +238,11 @@ const DoctorContext = () => {
               placeholder="Search doctors, specializations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-12 rounded-xl border border-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white/80 backdrop-blur-sm"
+              className="w-full px-4 py-3 pl-12 rounded-xl border border-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/80 backdrop-blur-sm"
             />
           </div>
 
-          <h2 className="text-emerald-700 font-semibold text-lg mt-8 mb-4 flex items-center gap-2">
+          <h2 className="text-purple-700 font-semibold text-lg mt-8 mb-4 flex items-center gap-2">
             Nearby Doctors
           </h2>
         </div>
@@ -254,11 +253,11 @@ const DoctorContext = () => {
           {doctors.map((doctor, i) => (
             <div
               key={i}
-              className="bg-white text-black rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-emerald-100"
+              className="bg-white text-black rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden border border-purple-200"
             >
               <div className="p-4 sm:p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-emerald-400 to-green-300 p-1 flex-shrink-0">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-blue-300 p-1 flex-shrink-0">
                     <img
                       src="https://via.placeholder.com/80"
                       alt={doctor.name}
@@ -268,17 +267,15 @@ const DoctorContext = () => {
                   <div className="flex-grow">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                          {doctor.name}
-                        </h2>
-                        <p className="text-emerald-600 text-sm">{doctor.specialization}</p>
+                        <h2 className="text-lg font-semibold text-gray-800">{doctor.name}</h2>
+                        <p className="text-purple-600 text-sm">{doctor.specialization}</p>
                       </div>
                     </div>
 
                     <div className="mt-4 flex justify-between items-center">
                       <button
                         onClick={() => handleBookAppointment(doctor)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
                       >
                         <CalendarIcon className="w-4 h-4" />
                         <span>Book Appointment</span>
@@ -317,7 +314,7 @@ const DoctorContext = () => {
               <input
                 type="text"
                 placeholder="Your Phone Number"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-green-500"
+                className="px-4 py-2 rounded-lg border border-gray-300 text-purple-500"
                 value={appointmentDetails.phone}
                 onChange={(e) =>
                   setAppointmentDetails({ ...appointmentDetails, phone: e.target.value })
@@ -326,7 +323,7 @@ const DoctorContext = () => {
               <input
                 type="email"
                 placeholder="Your Email"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-green-500"
+                className="px-4 py-2 rounded-lg border border-gray-300 text-purple-500"
                 value={appointmentDetails.email}
                 onChange={(e) =>
                   setAppointmentDetails({ ...appointmentDetails, email: e.target.value })
@@ -334,7 +331,7 @@ const DoctorContext = () => {
               />
               <input
                 type="date"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-green-500"
+                className="px-4 py-2 rounded-lg border border-gray-300 text-purple-500"
                 value={appointmentDetails.date}
                 onChange={(e) =>
                   setAppointmentDetails({ ...appointmentDetails, date: e.target.value })
@@ -342,7 +339,7 @@ const DoctorContext = () => {
               />
               <input
                 type="time"
-                className="px-4 py-2 rounded-lg border border-gray-300 text-green-500"
+                className="px-4 py-2 rounded-lg border border-gray-300 text-purple-500"
                 value={appointmentDetails.time}
                 onChange={(e) =>
                   setAppointmentDetails({ ...appointmentDetails, time: e.target.value })
@@ -352,7 +349,7 @@ const DoctorContext = () => {
             <div className="flex justify-center">
               <button
                 onClick={handleConfirmAppointment}
-                className="mt-4 px-6 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                className="mt-4 px-6 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
               >
                 Confirm Appointment
               </button>

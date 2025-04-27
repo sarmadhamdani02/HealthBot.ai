@@ -15,12 +15,13 @@ import {
   HelpCircle,
   X
 } from "lucide-react";
-import { auth } from '../../lib/firebase'; // Import the Firebase auth instance
-import { signOut } from 'firebase/auth'; // Import the Firebase signOut function
+import { auth } from '../../lib/firebase';
+import { signOut } from 'firebase/auth';
+import Logo from "./logo";
 
 const Header: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [user, setUser] = useState<{ name: string } | null>(null); // State to hold user data
+  const [user, setUser] = useState<{ name: string } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -34,28 +35,21 @@ const Header: React.FC = () => {
     { href: "/OTP", label: "OTP Screen", icon: <MessageSquare className="w-5 h-5" /> },
   ];
 
-  // Fetch the user data when the component mounts
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        // If the user is logged in, set user info
         setUser({ name: user.displayName || "Guest" });
       } else {
-        // If no user is logged in, set to null or Guest
         setUser(null);
       }
     });
-
-    // Clean up the listener on component unmount
     return () => unsubscribe();
   }, []);
 
-  // Close sidebar when route changes
   useEffect(() => {
     setShowDrawer(false);
   }, [pathname]);
 
-  // Handle click outside to close sidebar
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const sidebar = document.getElementById('sidebar');
@@ -80,43 +74,35 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 border-b backdrop-blur-sm bg-white/30">
+      <header className="fixed top-0 left-0 right-0 z-40 border-b border-white/20 backdrop-blur-sm bg-white/30">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           {/* Menu Button */}
           <button
             id="menu-button"
             onClick={() => setShowDrawer(!showDrawer)}
-            className="p-2 hover:bg-emerald-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-[#6366F1]/10 rounded-lg transition-colors"
           >
             {showDrawer ? (
-              <ArrowLeft className="w-6 h-6 text-emerald-600" />
+              <ArrowLeft className="w-6 h-6 text-[#6366F1]" />
             ) : (
-              <Menu className="w-6 h-6 text-emerald-600" />
+              <Menu className="w-6 h-6 text-[#6366F1]" />
             )}
           </button>
 
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <Bot className="w-8 h-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
-              HealthBot
-            </h1>
-          </div>
-
+          <Logo />
 
           {/* Logout */}
           <button
             onClick={async () => {
               try {
-                // Log the user out from Firebase
                 await signOut(auth);
-                // Redirect to login page after successful logout
                 router.push("/login");
               } catch (error) {
                 console.error("Error signing out: ", error);
               }
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-emerald-600 hover:bg-emerald-100 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#6366F1] hover:bg-[#6366F1]/10 transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span className="hidden sm:inline">Logout</span>
@@ -132,21 +118,23 @@ const Header: React.FC = () => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed top-0 left-0 h-full w-72 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${showDrawer ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-sm shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${showDrawer ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b flex justify-between items-center">
+        <div className="p-4 border-b border-white/20 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Bot className="w-6 h-6 text-emerald-600" />
-            <h2 className="text-lg font-semibold text-emerald-700">
+            <div className="p-2 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-lg">
+              <Bot className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800">
               Hello, {user ? user.name : "Guest"}
             </h2>
           </div>
           <button
             onClick={() => setShowDrawer(false)}
-            className="p-1 hover:bg-emerald-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-[#6366F1]/10 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-emerald-600" />
+            <X className="w-5 h-5 text-[#6366F1]" />
           </button>
         </div>
 
@@ -156,7 +144,7 @@ const Header: React.FC = () => {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors ${pathname === link.href ? 'bg-emerald-50 text-emerald-600 border-r-4 border-emerald-600' : ''}`}
+              className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-[#6366F1]/10 hover:text-[#6366F1] transition-colors ${pathname === link.href ? 'bg-[#6366F1]/10 text-[#6366F1] border-r-4 border-[#6366F1]' : ''}`}
             >
               {link.icon}
               <span className="font-medium">{link.label}</span>
@@ -165,10 +153,10 @@ const Header: React.FC = () => {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/20">
           <Link
             href="/help"
-            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition-colors"
+            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-[#6366F1]/10 hover:text-[#6366F1] rounded-lg transition-colors"
           >
             <HelpCircle className="w-5 h-5" />
             <span className="font-medium">Help & Support</span>

@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
 import { signinAction } from '@/app/auth/signin/signin-action';
-import Logo from '@/app/components/logo'; // Import the Logo component
+
+import Logo from '@/app/components/logo';
 
 const LoginContent = () => {
   const [email, setEmail] = useState('');
@@ -99,22 +100,24 @@ const LoginContent = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
       <header className="w-full flex justify-between p-6">
         <div />
-        <Logo /> {/* Include the Logo component */}
-        <a href="/" className="text-[#00DB0F] font-semibold absolute top-10 right-10 pl-10">HealthBot</a>
+        <h1 className="text-[#6366F1] text-3xl font-bold absolute top-10 left-[40%]">Welcome Back!</h1>
+        <a href="/" className="text-[#6366F1] font-semibold absolute top-10 left-6 pl-10">
+          <Logo />
+        </a>
       </header>
 
-      <div className="bg-white w-full max-w-md p-8 rounded-md shadow-md">
-        {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
+      <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-xl">
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>} {/* Display error message */}
         <form onSubmit={handleEmailSignIn}>
           <div className="space-y-4">
             <input
               id="email"
               type="email"
               placeholder="Enter Email"
-              className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
+              className="border border-[#6366F1] rounded-lg px-4 py-3 w-full text-[#6366F1] placeholder-[#6366F1] focus:ring-2 focus:ring-[#6366F1] transition-all duration-200"
               name="email"
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -123,27 +126,29 @@ const LoginContent = () => {
               id="password"
               type="password"
               placeholder="Enter Password"
-              className="border border-[#00DB0F] rounded-lg px-4 py-2 w-full text-[#00DB0F] placeholder-[#00DB0F] placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-[#00DB0F]"
+              className="border border-[#6366F1] rounded-lg px-4 py-3 w-full text-[#6366F1] placeholder-[#6366F1] focus:ring-2 focus:ring-[#6366F1] transition-all duration-200"
               name="password"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" disabled={isPending} className="mt-6 w-full bg-[#00DB0F] text-white py-2 rounded-lg hover:bg-[#00DB0F]/90 transition duration-200">
+          <button type="submit" disabled={isPending} className="mt-6 w-full bg-[#6366F1] text-white py-3 rounded-lg hover:bg-[#5A4BEF] transition-all duration-300">
             {isPending ? 'Signing in...' : 'Sign in with Email'}
           </button>
         </form>
-        <button className="text-[#00DB0F]" onClick={() => router.push("/forgot-password")}>Forgot password?</button>
+        <button className="text-[#6366F1] mt-4" onClick={() => router.push("/forgot-password")}>Forgot password?</button>
 
         <div className="flex justify-center mt-6">
-          <button onClick={handleGoogleSignIn} className="bg-[#00DB0F] p-2 rounded-full">
-            <RiGoogleFill className='text-white w-6 h-auto' />
+          <button onClick={handleGoogleSignIn} className="bg-[#6366F1] p-3 rounded-full shadow-md hover:shadow-xl transition-all duration-200">
+            <RiGoogleFill className="text-white w-6 h-auto" />
           </button>
         </div>
 
         <p className="text-center mt-4 text-gray-600">
           Do not have an account?{' '}
-          <a href="/signup" className="text-[#00DB0F] font-semibold">Sign up</a>
+          <a href="/signup" className="text-[#6366F1] font-semibold hover:underline">
+            Sign up
+          </a>
         </p>
       </div>
     </div>

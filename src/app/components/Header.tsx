@@ -29,10 +29,8 @@ const Header: React.FC = () => {
     { href: "/dashboard", label: "Dashboard", icon: <Home className="w-5 h-5" /> },
     { href: "/chatscreen", label: "Chat Screen", icon: <MessageSquare className="w-5 h-5" /> },
     { href: "/doctorscreen", label: "Doctor Screen", icon: <User className="w-5 h-5" /> },
-    { href: "/profile", label: "Profile", icon: <Settings className="w-5 h-5" /> },
     { href: "/login", label: "Login", icon: <LogOut className="w-5 h-5" /> },
     { href: "/signup", label: "Signup", icon: <User className="w-5 h-5" /> },
-    { href: "/OTP", label: "OTP Screen", icon: <MessageSquare className="w-5 h-5" /> },
   ];
 
   useEffect(() => {

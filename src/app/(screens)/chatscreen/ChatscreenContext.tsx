@@ -8,9 +8,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Header from "@/app/components/Header";
-import { Bot, ArrowUp, User, Mic, LoaderCircle, Stethoscope, Sparkles } from "lucide-react";
+import { Bot, ArrowUp, User, Mic, LoaderCircle, Stethoscope, Sparkles, Lightbulb, Sparkle, ClipboardPlus } from "lucide-react";
 
 const ChatscreenContext = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [doctorList, setDoctorList] = useState([]);
+
     const router = useRouter();
     const [prompt, setPrompt] = useState("");
     const [promptLoading, setPromptLoading] = useState(false);
@@ -82,11 +86,88 @@ const ChatscreenContext = () => {
         setPromptLoading(false);
     };
 
+    const showDoctorRecommendation = async () => {
+        setShowModal(true);
+        setIsLoading(true);
+
+        try {
+            const res = await fetch("http://localhost:5000/scrape", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    city: "attock", // make dynamic if needed
+                    doctor: "general-physician"
+                })
+            });
+            const data = await res.json();
+            setDoctorList(data);
+            setDoctorList(data.slice(0, 6));
+        } catch (err) {
+            console.error("Error fetching doctors:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
                 
             
             <Header />
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 relative">
+                        <button
+                            className="absolute top-2 right-3 text-gray-400 hover:text-black text-xl"
+                            onClick={() => setShowModal(false)}
+                        >
+                            &times;
+                        </button>
+
+                        <h2 className="text-lg font-semibold mb-4 text-center text-indigo-600 flex items-center justify-center">
+                            <ClipboardPlus /> Recommended Doctors nearby
+                        </h2>
+
+                        {isLoading ? (
+                            <div className="text-center py-10 text-indigo-500 flex items-center justify-center">
+                                <p className="  text-indigo-500 flex items-center justify-center"> Finding Best Doctors for you <Sparkle className=" animate-spin ml-3" /></p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {doctorList.map((doc, index) => (
+                                    <a
+                                        href={doc.profileLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        key={index}
+                                        className="border rounded-lg p-4 flex gap-3 hover:shadow-md transition"
+                                    >
+                                        {doc.image ? (
+                                            <img
+                                                src={doc.image}
+                                                alt={doc.name}
+                                                className="w-16 h-16 object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-sm text-gray-500">
+                                                N/A
+                                            </div>
+                                        )}
+
+                                        <div className="flex-1">
+                                            <h3 className="font-semibold text-sm text-gray-800">{doc.name}</h3>
+                                            <p className="text-xs text-gray-500">{doc.speciality}</p>
+                                            <p className="text-xs text-gray-400">{doc.experience}</p>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <main className="flex-1 overflow-y-auto p-4 pt-10 pb-24 mt-12">
                 <div className="container mx-auto max-w-4xl space-y-4">
@@ -146,9 +227,13 @@ const ChatscreenContext = () => {
                                         {message.content}
                                     </ReactMarkdown>
 
+
                                     {message.type === "bot" && message.symptoms.length > 0 && (
-                                        <div className="mt-6 pt-2 border-t border-gray-200">
-                                            <div className="flex items-center gap-2 text-xs text-[#6366F1] font-medium">
+                                        <div className="mt-3 pt-2 border-t border-gray-200">
+
+
+
+                                            <div className="flex items-center gap-2 text-xs text-[#6366F1] font-medium mt-3">
                                                 <Stethoscope className="w-4 h-4" />
                                                 <span>Identified symptoms</span>
                                             </div>
@@ -162,6 +247,19 @@ const ChatscreenContext = () => {
                                                     </span>
                                                 ))}
                                             </div>
+
+                                        </div>
+                                    )}
+
+                                    {message.type === "bot" && index !== 0  && (
+                                        <div className="mt-3 pt-2 border-t border-gray-200">
+
+                                            <button className=" cursor-pointer" onClick={() => { showDoctorRecommendation() }}>
+                                                <div className="flex items-center gap-2 text-xs text-[#6366F1] font-medium hover:underline">
+                                                    <Lightbulb className="w-4 h-4 mr-3" />
+                                                    <span>Recommend Doctors?</span>
+                                                </div>
+                                            </button>
                                         </div>
                                     )}
                                 </motion.div>
@@ -214,7 +312,7 @@ const ChatscreenContext = () => {
                                 : "bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] hover:shadow-[#6366F1]/40"}`}
                         >
                             {promptLoading ? (
-                                <LoaderCircle className="w-5 h-5 text-white animate-spin" />
+                                <Sparkle className="w-5 h-5 text-white animate-spin" />
                             ) : (
                                 <ArrowUp className="w-5 h-5 text-white" />
                             )}

@@ -8,12 +8,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Header from "@/app/components/Header";
-import { Bot, ArrowUp, User, Mic, LoaderCircle, Stethoscope, Sparkles, Lightbulb, Sparkle, ClipboardPlus } from "lucide-react";
+import { Bot, ArrowUp, User, Mic, LoaderCircle, Stethoscope, Sparkles, Lightbulb, Sparkle, ClipboardPlus, Volume2, X } from "lucide-react";
 
 const ChatscreenContext = () => {
     const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [doctorList, setDoctorList] = useState([]);
+
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [currentSpeechId, setCurrentSpeechId] = useState<number | null>(null);
 
     const router = useRouter();
     const [prompt, setPrompt] = useState("");
@@ -86,6 +89,36 @@ const ChatscreenContext = () => {
         setPromptLoading(false);
     };
 
+    // Add this function to your component
+    const speakMessage = (text: string) => {
+        if ('speechSynthesis' in window) {
+            setIsSpeaking(true);
+            const utterance = new SpeechSynthesisUtterance(text);
+            const speechId = Date.now();
+            setCurrentSpeechId(speechId);
+
+            utterance.onstart = () => setIsSpeaking(true);
+            utterance.onend = () => {
+                if (currentSpeechId === speechId) {
+                    setIsSpeaking(false);
+                }
+            };
+            utterance.onerror = () => setIsSpeaking(false);
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+    };
+
+    // Add cleanup
+    useEffect(() => {
+        return () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, []);
+
     const showDoctorRecommendation = async () => {
         setShowModal(true);
         setIsLoading(true);
@@ -113,8 +146,8 @@ const ChatscreenContext = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
-                
-            
+
+
             <Header />
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -187,6 +220,30 @@ const ChatscreenContext = () => {
                                     </div>
                                 )}
 
+
+                                {message.type === "bot" && (
+                                    <div className="flex items-center gap-2 text-xs text-[#6366F1] font-medium mt-3">
+                                        <button
+                                            onClick={() => {
+                                                if (isSpeaking) {
+                                                    window.speechSynthesis.cancel();
+                                                    setIsSpeaking(false);
+                                                } else {
+                                                    speakMessage(message.content);
+                                                }
+                                            }}
+                                            className="p-1 hover:bg-[#6366F1]/10 rounded-full"
+                                            aria-label={isSpeaking ? "Stop speaking" : "Read aloud"}
+                                        >
+                                            {isSpeaking ? (
+                                                <X className="w-4 h-4" />
+                                            ) : (
+                                                <Volume2 className="w-4 h-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+
                                 <motion.div
                                     className={`max-w-[85%] rounded-2xl px-4 py-3 relative ${message.type === "bot"
                                         ? "bg-white shadow-md text-gray-800 border border-white/30"
@@ -251,7 +308,7 @@ const ChatscreenContext = () => {
                                         </div>
                                     )}
 
-                                    {message.type === "bot" && index !== 0  && (
+                                    {message.type === "bot" && index !== 0 && (
                                         <div className="mt-3 pt-2 border-t border-gray-200">
 
                                             <button className=" cursor-pointer" onClick={() => { showDoctorRecommendation() }}>

@@ -11,7 +11,8 @@ import {
     User,
     LogOut,
     Plus,
-    Bot
+    Bot,
+    Sparkles
 } from 'lucide-react';
 import DoctorAppointmentCard from '@/app/components/DoctorAppointmentCard';
 import Header from '@/app/components/Header';
@@ -53,15 +54,35 @@ const DashboardContent = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] relative">
+            {/* Floating AI Chat Button */}
+            <button 
+                onClick={() => router.push('/chatscreen')}
+                className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300"
+                style={{
+                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 30%, #EC4899 70%, #F97316 100%)',
+                    backgroundSize: '200% 200%',
+                    animation: 'gradientPulse 6s ease infinite',
+                }}
+            >
+                <div className="relative">
+                    <Bot className="w-6 h-6 text-white" />
+                    <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
+                </div>
+                <span className="text-white font-semibold text-lg">Chat With HealthBot AI</span>
+                <div className="absolute inset-0 rounded-full bg-white opacity-0 hover:opacity-10 transition-opacity"></div>
+            </button>
+
             {/* Header */}
             <Header />
 
-            <main className="container mx-auto px-6  pb-16 space-y-8 pt-24">
+            <main className="container mx-auto px-6 pb-16 space-y-8 pt-24">
                 {/* Welcome Banner */}
-                <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] rounded-3xl p-8 text-white">
-                    <h2 className="text-2xl font-bold mb-2">Welcome back!</h2>
-                    <p className="opacity-90">You have {bookings.length} upcoming appointment{bookings.length !== 1 ? 's' : ''}</p>
+                <div className="bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] rounded-3xl p-8 text-white relative overflow-hidden">
+                    <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-white/10"></div>
+                    <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-white/5"></div>
+                    <h2 className="text-2xl font-bold mb-2 relative z-10">Welcome back!</h2>
+                    <p className="opacity-90 relative z-10">You have {bookings.length} upcoming appointment{bookings.length !== 1 ? 's' : ''}</p>
                 </div>
 
                 {/* Appointments Section */}
@@ -106,35 +127,6 @@ const DashboardContent = () => {
                         )}
                     </div>
                 </section>
-
-                {/* Chat Section */}
-                {/* <section className="bg-gradient-to-br from-white/80 to-white/20 backdrop-blur-sm rounded-3xl border border-white/20 shadow-sm overflow-hidden">
-                    <div className="border-b border-white/20 p-6">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-xl">
-                                <MessageSquare className="w-5 h-5 text-white" />
-                            </div>
-                            <h2 className="text-xl font-semibold text-gray-900">Recent Conversations</h2>
-                        </div>
-                    </div>
-                    <div className="p-6 space-y-3">
-                        {['Medication Inquiry', 'Symptom Check', 'Diet Plan'].map((text, index) => (
-                            <div
-                                key={index}
-                                className="flex justify-between items-center p-4 rounded-xl bg-white/50 hover:bg-white/90 transition-colors duration-200 border border-white/30"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                    <span className="text-gray-700 font-medium">{text}</span>
-                                </div>
-                                <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#6366F1]/10 to-[#8B5CF6]/10 text-[#6366F1] hover:shadow-sm transition-all">
-                                    <span className="text-sm font-medium">Continue</span>
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </section> */}
             </main>
 
             {/* Footer */}
@@ -143,6 +135,15 @@ const DashboardContent = () => {
                     <p className="text-gray-600">© {new Date().getFullYear()} HealthBot. All rights reserved.</p>
                 </div>
             </footer>
+
+            {/* Add the animation style */}
+            <style jsx>{`
+                @keyframes gradientPulse {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+            `}</style>
         </div>
     );
 };

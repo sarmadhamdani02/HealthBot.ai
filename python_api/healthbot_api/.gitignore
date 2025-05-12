@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg/
+
+# Logs and database files
+*.log
+db.sqlite3
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Testing / coverage
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Other IDE and editor-specific files
+*.swp
+*.swo
+*.bak
+
+
+digest.txt

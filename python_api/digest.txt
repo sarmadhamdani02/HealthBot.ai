@@ -1,0 +1,313 @@
+Directory structure:
+└── healthbot_api/
+    ├── app.py
+    ├── connect_memory_with_llm.py
+    ├── create_memory_for_llm.py
+    ├── requirements.txt
+    ├── pdf_data/
+    │   ├── common_desease_treatment/
+    │   ├── first_aid_emergency/
+    │   ├── general_health_wellness/
+    │   └── mental_health_stress/
+    └── vectorStore/
+        └── db_faiss/
+            ├── index.faiss
+            └── index.pkl
+
+================================================
+File: app.py
+================================================
+from flask import Flask, request, jsonify
+from connect_memory_with_llm import qa_chain
+from flask_cors import CORS  # Import CORS
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+@app.route("/healthbot_chat", methods=["POST"])
+def health_bot_chat():
+    data = request.get_json()  # Get user input as JSON
+    user_prompt = data.get("query")  # Extract query text
+
+    if not user_prompt:
+        return jsonify({"error": "Query is missing"}), 400  
+
+    try:
+        response = qa_chain.invoke({'query': user_prompt})  # Process with LLM
+        
+        # Extract result safely
+        answer = response.get("result", "I'm not sure about that. Can you rephrase or ask something else?")
+
+        # Ensure source_documents is a list before iterating
+        source_documents = response.get("source_documents", [])
+        if not isinstance(source_documents, list):  
+            source_documents = []  
+
+        # Convert objects to string
+        serialized_sources = [str(doc) for doc in source_documents]  
+
+        # If no relevant source found, modify response
+        if not serialized_sources:
+            return jsonify({
+                "answer": "I couldn't find any relevant information in my data. Maybe try rephrasing your question?",
+                "source": []
+            })
+
+        return jsonify({"answer": answer, "source": serialized_sources})  
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)  # Run on port 5000
+
+
+
+================================================
+File: connect_memory_with_llm.py
+================================================
+import os 
+import asyncio 
+from dotenv import load_dotenv 
+from langchain.memory import ConversationBufferMemory 
+from langchain_community.vectorstores import FAISS 
+from langchain_openai import ChatOpenAI 
+from langchain_huggingface import HuggingFaceEmbeddings 
+from langchain.chains import create_retrieval_chain 
+from langchain.chains.combine_documents.stuff import create_stuff_documents_chain 
+from langchain.prompts import PromptTemplate 
+from langchain_core.prompts import ChatPromptTemplate 
+from langchain_core.output_parsers import StrOutputParser 
+from langchain_core.documents import Document 
+
+# Load environment variables 
+load_dotenv() 
+HF_TOKEN = os.getenv("HF_TOKEN") 
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY") 
+
+# Initialize memory 
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True) 
+
+# Load LLM model 
+def load_llm(): 
+    return ChatOpenAI( 
+        openai_api_base="https://openrouter.ai/api/v1", 
+        openai_api_key=OPENROUTER_API_KEY, 
+        model="mistralai/mistral-small-24b-instruct-2501:free", 
+        temperature=0.5 
+    ) 
+
+# Define FAISS vector store path 
+DB_FAISS_PATH = "vectorstore/db_faiss" 
+
+# Custom prompt template for HealthBot 
+custom_prompt_template = ChatPromptTemplate.from_messages( 
+    [("system", """ 
+You are **HealthBot**, an AI health assistant providing reliable, conversational guidance. 
+
+### 👨‍⚕️ **How You Help**: 
+1️⃣ **Symptom Analysis**: 
+   - Ask clarifying questions. 
+   - Suggest precautions and when to see a doctor. 
+   - Provide first aid advice for serious cases. 
+
+2️⃣ **Doctor-like Conversation**: 
+   - Keep it simple, avoid medical jargon. 
+   - Offer practical self-care tips. 
+   - Recommend professional help if needed. 
+
+3️⃣ **Multilingual Support**: 
+   - Respond in the user's language (English, Urdu, etc.) 
+
+🔹 **Guidelines**: 
+- Be **empathetic, professional, and friendly**—like a helpful doctor. 
+- **Never diagnose** or prescribe medicine—only suggest precautions. 
+- If unsure, say: *"I don’t know."* 
+- **Urgent cases** (chest pain, breathing issues) → *Advise emergency care.* 
+- **Use markdown syntax** for important details (`**bold**` for emphasis). 
+
+--- 
+
+### **Query Details** 
+🔹 **USER QUESTION:** {input} 
+    """)] 
+) 
+
+# Symptom extraction prompt 
+symptom_extraction_prompt = ChatPromptTemplate.from_messages( 
+    [("system", """ 
+Extract only the symptoms mentioned in the user's query as an **array**. 
+If no symptoms are mentioned, return an **empty array** `[]`. 
+
+### **Example Input**: 
+**User:** "I have a fever, cough, and body aches." 
+
+### **Expected Output**: 
+`["fever", "cough", "body aches"]` 
+
+--- 
+
+🔹 **USER QUESTION:** {input} 
+🔹 **OUTPUT FORMAT:** `[]` 
+    """)] 
+) 
+
+# Load updated HuggingFace embedding model 
+embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2") 
+
+# Load FAISS database 
+try: 
+    db = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True) 
+except Exception as e: 
+    print(f"Error loading FAISS database: {e}") 
+    db = None 
+
+# Ensure retriever returns Document objects 
+retriever = db.as_retriever(search_kwargs={'k': 3}) if db else None 
+
+# Create main HealthBot QA chain
+qa_chain = create_retrieval_chain(
+    retriever=retriever,
+    combine_docs_chain=create_stuff_documents_chain(
+        llm=load_llm(),
+        prompt=custom_prompt_template,
+        output_parser=StrOutputParser()
+    ) if retriever else None
+)
+
+# Create symptom extraction chain
+symptom_chain = create_retrieval_chain(
+    retriever=retriever,
+    combine_docs_chain=create_stuff_documents_chain(
+        llm=load_llm(),
+        prompt=symptom_extraction_prompt,
+        output_parser=StrOutputParser()
+    ) if retriever else None
+)
+
+# Async function to handle user queries
+async def run_queries(query):
+    try:
+        # QA Chain
+        if qa_chain:
+            response1 = await qa_chain.ainvoke({"input": query})
+            health_response = response1.get("answer", "No health response generated.")
+        else:
+            health_response = "FAISS database unavailable."
+
+        # Symptom Chain
+        if symptom_chain:
+            response2 = await symptom_chain.ainvoke({"input": query})
+            symptom_response = response2.get("answer", "No symptoms extracted.")
+        else:
+            symptom_response = "FAISS database unavailable."
+
+        print(f"\n🩺 **HealthBot Response:**\n{health_response}")
+        print(f"\n🩺 **Extracted Symptoms:** {symptom_response}")
+
+    except Exception as e:
+        print(f"🔥 Error processing query: {e}")
+
+
+================================================
+File: create_memory_for_llm.py
+================================================
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from pathlib import Path
+from tqdm import tqdm
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+HUGGINGFACE_TOKEN = os.getenv("HF_TOKEN")
+
+# ✅ Load PDFs
+data_path = "pdf_data/"
+
+def load_pdf_files(data_path):
+    pdf_files = list(Path(data_path).rglob("*.pdf"))
+    documents = []
+
+    for pdf_file in tqdm(pdf_files, desc="Loading PDFs", unit="file"):
+        try:
+            loader = PyPDFLoader(str(pdf_file))
+            docs = loader.load()  # Try loading the PDF
+            documents.extend(docs)
+        except Exception as e:
+            print(f"❌ Error loading {pdf_file}: {e}")  # Skip corrupt files but continue
+
+    return documents
+
+documents = load_pdf_files(data_path)
+print(f"\n✅ Total documents loaded: {len(documents)}")
+
+# ✅ Create text chunks
+def create_chunks(data):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    text_chunks = text_splitter.split_documents(data)
+    return text_chunks
+
+text_chunks = create_chunks(documents)
+print(f"Text Chunk Size= {len(text_chunks)}")
+
+# ✅ Get embedding model
+def get_embedding_model():
+    try:
+        embedding_model = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",  # ✅ Corrected Model Name
+            model_kwargs={"token": HUGGINGFACE_TOKEN}  # ✅ Authentication
+        )
+        return embedding_model
+    except Exception as e:
+        print(f"❌ Error loading embedding model: {e}")
+        return None
+
+embedding_model = get_embedding_model()
+
+if embedding_model is None:
+    print("⚠️ Failed to load embedding model. Exiting...")
+    exit(1)
+
+# ✅ Store embeddings in FAISS DB
+DB_FAISS_PATH = "vectorStore/db_faiss"
+
+try:
+    db = FAISS.from_documents(text_chunks, embedding_model)
+    db.save_local(DB_FAISS_PATH)
+    print(f"✅ Success! Embeddings saved in {DB_FAISS_PATH}")
+except Exception as e:
+    print(f"❌ Error saving embeddings: {e}")
+
+
+
+================================================
+File: requirements.txt
+================================================
+flask
+flask-cors
+dotenv
+langchain
+langchain_openai
+langchain_huggingface
+faiss-cpu
+
+
+
+
+
+
+
+================================================
+File: vectorStore/db_faiss/index.faiss
+================================================
+[Non-text file]
+
+
+================================================
+File: vectorStore/db_faiss/index.pkl
+================================================
+[Non-text file]
+

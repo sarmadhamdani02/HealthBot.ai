@@ -5,7 +5,7 @@ import { RiGoogleFill } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
-import Logo from '@/app/components/logo';
+import Logo from '@/app/components/Logo';
 
 const SignupContent = () => {
   const [email, setEmail] = useState('');

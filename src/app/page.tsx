@@ -14,7 +14,7 @@ import {
   Sparkles 
 } from 'lucide-react';
 import React from 'react';
-import Logo from './components/logo';
+import Logo from './components/Logo';
 
 // Define the icon components map to ensure they're always available
 const iconComponents = {

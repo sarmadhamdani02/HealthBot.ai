@@ -7,7 +7,7 @@ import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../../lib/firebase';
 import { signinAction } from '@/app/auth/signin/signin-action';
 
-import Logo from '@/app/components/logo';
+import Logo from '@/app/components/Logo';
 
 const LoginContent = () => {
   const [email, setEmail] = useState('');

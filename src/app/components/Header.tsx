@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { auth } from '../../lib/firebase';
 import { signOut } from 'firebase/auth';
-import Logo from "./logo";
+import Logo from "./Logo";
 
 const Header: React.FC = () => {
   const [showDrawer, setShowDrawer] = useState(false);

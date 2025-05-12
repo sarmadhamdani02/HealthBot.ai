@@ -8,6 +8,18 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* In your global CSS file (e.g., index.css, App.css, or styles.css) */
+::selection {
+  background-color: #7861f3;
+  color: white; /* Optional: change text color for better contrast */
+}
+
+/* For better browser compatibility */
+::-moz-selection {
+  background-color: #7861f3;
+  color: white;
+}
+
 .neon-border {
   position: relative;
   border-right: 2px solid transparent;

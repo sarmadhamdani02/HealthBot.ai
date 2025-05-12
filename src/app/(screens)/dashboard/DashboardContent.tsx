@@ -4,14 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from "@/lib/firebase";
-import { 
-  MessageSquare, 
-  ChevronRight, 
-  Calendar,
-  User,
-  LogOut,
-  Plus,
-  Bot
+import {
+    MessageSquare,
+    ChevronRight,
+    Calendar,
+    User,
+    LogOut,
+    Plus,
+    Bot
 } from 'lucide-react';
 import DoctorAppointmentCard from '@/app/components/DoctorAppointmentCard';
 import Header from '@/app/components/Header';
@@ -55,7 +55,7 @@ const DashboardContent = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE]">
             {/* Header */}
-          <Header/>
+            <Header />
 
             <main className="container mx-auto px-6  pb-16 space-y-8 pt-24">
                 {/* Welcome Banner */}
@@ -74,7 +74,9 @@ const DashboardContent = () => {
                                 </div>
                                 <h2 className="text-xl font-semibold text-gray-900">Upcoming Appointments</h2>
                             </div>
-                            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-full text-sm font-medium hover:shadow-lg hover:shadow-[#6366F1]/40 transition-all">
+                            <button 
+                            onClick={() => router.push('/doctorscreen')}
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-full text-sm font-medium hover:shadow-lg hover:shadow-[#6366F1]/40 transition-all">
                                 <Plus className="w-4 h-4" />
                                 New Appointment
                             </button>
@@ -93,7 +95,9 @@ const DashboardContent = () => {
                                     <Calendar className="w-12 h-12 text-[#8B5CF6] mb-4" />
                                     <h3 className="text-xl font-medium text-gray-700 mb-2">No Upcoming Appointments</h3>
                                     <p className="text-gray-500 max-w-md text-center">Schedule your next appointment with our healthcare providers</p>
-                                    <button className="mt-4 flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-full text-sm font-medium hover:shadow-lg hover:shadow-[#6366F1]/40 transition-all">
+                                    <button
+                                        onClick={() => router.push('/doctorscreen')}
+                                        className="mt-4 flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-full text-sm font-medium hover:shadow-lg hover:shadow-[#6366F1]/40 transition-all">
                                         Book Now
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
@@ -104,7 +108,7 @@ const DashboardContent = () => {
                 </section>
 
                 {/* Chat Section */}
-                <section className="bg-gradient-to-br from-white/80 to-white/20 backdrop-blur-sm rounded-3xl border border-white/20 shadow-sm overflow-hidden">
+                {/* <section className="bg-gradient-to-br from-white/80 to-white/20 backdrop-blur-sm rounded-3xl border border-white/20 shadow-sm overflow-hidden">
                     <div className="border-b border-white/20 p-6">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-xl">
@@ -130,7 +134,7 @@ const DashboardContent = () => {
                             </div>
                         ))}
                     </div>
-                </section>
+                </section> */}
             </main>
 
             {/* Footer */}
